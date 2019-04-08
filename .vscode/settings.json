@@ -1,0 +1,6 @@
+{
+    "editor.formatOnSave": true,
+    "go.autocompleteUnimportedPackages": true,
+    "go.coverOnSave": true,
+    "go.testOnSave": true
+}
