@@ -40,7 +40,7 @@ func transform(client pb.SampleServiceClient) {
 }
 
 func stream(client pb.SampleServiceClient) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	stream, err := client.Stream(ctx)
@@ -49,6 +49,7 @@ func stream(client pb.SampleServiceClient) {
 	}
 
 	defer func() {
+		time.Sleep(time.Second)
 		log.Printf("close")
 		err := stream.CloseSend()
 		if err != nil {
@@ -56,7 +57,7 @@ func stream(client pb.SampleServiceClient) {
 		}
 	}()
 
-	for i := 1; i <= 100000; i++ {
+	for i := 1; i <= 10000; i++ {
 		log.Printf("index: %v", i)
 		err = stream.Send(&pb.SampleRequest{Message: fmt.Sprintf("%v", i)})
 		if err == io.EOF {
@@ -65,6 +66,7 @@ func stream(client pb.SampleServiceClient) {
 		if err != nil {
 			log.Printf("err: %v", err)
 		}
-		time.Sleep(time.Millisecond / 60)
+
+		time.Sleep(time.Millisecond / 120)
 	}
 }
