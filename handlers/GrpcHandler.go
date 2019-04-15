@@ -19,6 +19,8 @@ func (s *SampleService) Transform(context context.Context, req *pb.SampleRequest
 
 func (s *SampleService) Stream(stream pb.SampleService_StreamServer) error {
 	for {
+
+		// Recive
 		req, err := stream.Recv()
 		if err == io.EOF {
 			continue
@@ -28,8 +30,10 @@ func (s *SampleService) Stream(stream pb.SampleService_StreamServer) error {
 		}
 		log.Println("Receive message>> ", req.Message)
 
-		// rsp := new(pb.SampleResponse)
-		// rsp.Message = "Hello " + req.Message + "."
-		// stream.Send(rsp)
+		// Send
+		err = stream.Send(&pb.SampleResponse{Message: "Hello " + req.Message + "."})
+		if err != nil {
+			log.Printf("err: %v", err)
+		}
 	}
 }

@@ -50,15 +50,18 @@ func stream(client pb.SampleServiceClient) {
 
 	defer func() {
 		time.Sleep(time.Second)
-		log.Printf("close")
 		err := stream.CloseSend()
 		if err != nil {
 			log.Printf("err: %v", err)
+		} else {
+			log.Printf("close")
 		}
 	}()
 
 	for i := 1; i <= 10000; i++ {
 		log.Printf("index: %v", i)
+
+		// Send
 		err = stream.Send(&pb.SampleRequest{Message: fmt.Sprintf("%v", i)})
 		if err == io.EOF {
 			return
@@ -67,6 +70,12 @@ func stream(client pb.SampleServiceClient) {
 			log.Printf("err: %v", err)
 		}
 
+		// Recive
+		res, err := stream.Recv()
+		if err == io.EOF {
+			continue
+		}
+		log.Println("Receive message>> ", res.Message)
 		time.Sleep(time.Millisecond / 120)
 	}
 }
