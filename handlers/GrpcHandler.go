@@ -11,9 +11,10 @@ import (
 type SampleService struct{}
 
 func (s *SampleService) Transform(context context.Context, req *pb.SampleRequest) (*pb.SampleResponse, error) {
-	log.Println("call from", req.Message)
+	log.Println("[Transf] Start Receive")
+	// log.Println("[Transf] Receive message>> ", req.Message)
 	rsp := new(pb.SampleResponse)
-	rsp.Message = "Hello " + req.Message + "."
+	rsp.Message = req.Message
 	return rsp, nil
 }
 
@@ -28,10 +29,11 @@ func (s *SampleService) Stream(stream pb.SampleService_StreamServer) error {
 		if err != nil {
 			return err
 		}
-		log.Println("Receive message>> ", req.Message)
+		log.Println("[Stream] Start Receive")
+		//log.Println("[Stream] Receive message>> ", req.Message)
 
 		// Send
-		err = stream.Send(&pb.SampleResponse{Message: "Hello " + req.Message + "."})
+		err = stream.Send(&pb.SampleResponse{Message: req.Message})
 		if err != nil {
 			log.Printf("err: %v", err)
 		}
